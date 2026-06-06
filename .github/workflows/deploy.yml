@@ -1,18 +1,35 @@
-            - name: Upload S3
-  # You may pin to the exact commit or the version.
-  # uses: shallwefootball/upload-s3-action@4350529f410221787ccf424e50133cbc1b52704e
-  uses: shallwefootball/upload-s3-action@v1.3.3
-  with:
-    # aws key id
-    aws_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    # aws secret access key
-    aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    # aws bucket name
-    aws_bucket: timonweides.de
-    # directory to upload
-    source_dir: website/index.html
-    # destination directory for upload
-    destination_dir: # optional, default is /
-    # endpoint URI to send requests
-    endpoint: # optional
-          
+name: Deploy Website
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Upload Website to S3
+        run: |
+          aws s3 sync ./website s3://${{ vars.S3_BUCKET }} --delete
+
+      - name: Clear CloudFront Cache
+        run: |
+          DISTRIBUTION_ID=$(aws cloudfront list-distributions \
+            --query "DistributionList.Items[?Aliases.Items[?contains(@, 'timonweides.de')]].Id" \
+            --output text)
+
+          aws cloudfront create-invalidation \
+            --distribution-id $DISTRIBUTION_ID \
+            --paths "/*"
