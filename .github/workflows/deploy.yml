@@ -13,6 +13,18 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v6
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform -chdir=terraform init
+
+      - name: Terraform Validate
+        run: terraform -chdir=terraform validate
+
+      - name: Terraform Plan
+        run: terraform -chdir=terraform plan -no-color
+        
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
