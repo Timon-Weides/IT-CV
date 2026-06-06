@@ -1,537 +1,912 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Timon Weides — IT Administrator & DevOps Engineer</title>
+  <title>Timon Weides — IT Administratorr</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0b0c0f;
-      --surface: #111318;
-      --border: #1e2128;
-      --accent: #5b8cff;
-      --accent2: #a78bfa;
-      --text: #e8eaf0;
-      --muted: #6b7280;
-      --tag-bg: #161921;
-      --line: rgba(91,140,255,0.18);
+      --red:      #c0392b;
+      --red-dim:  #8b2020;
+      --red-glow: rgba(192,57,43,0.12);
+      --transition: 0.25s ease;
+    }
+    [data-theme="dark"] {
+      --bg:        #0e0e0e;
+      --bg2:       #161616;
+      --bg3:       #1c1c1c;
+      --border:    #2a2a2a;
+      --border2:   #333333;
+      --text:      #e8e8e8;
+      --text2:     #999999;
+      --text3:     #555555;
+    }
+    [data-theme="light"] {
+      --bg:        #f5f4f0;
+      --bg2:       #eeede9;
+      --bg3:       #e6e5e1;
+      --border:    #d4d3cf;
+      --border2:   #c4c3bf;
+      --text:      #1a1a1a;
+      --text2:     #666666;
+      --text3:     #aaaaaa;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     html { scroll-behavior: smooth; }
 
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'DM Mono', monospace;
-      font-size: 14px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
       line-height: 1.7;
       overflow-x: hidden;
+      transition: background var(--transition), color var(--transition);
     }
 
-    /* NOISE OVERLAY */
-    body::before {
-      content: '';
+    /* ── TOPBAR ── */
+    .topbar {
       position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 999;
-      opacity: 0.6;
-    }
-
-    /* GRID BACKGROUND */
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(var(--line) 1px, transparent 1px),
-        linear-gradient(90deg, var(--line) 1px, transparent 1px);
-      background-size: 60px 60px;
-      pointer-events: none;
-      z-index: 0;
-      mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 100%);
-    }
-
-    .wrapper {
-      position: relative;
-      z-index: 1;
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    /* ─── HERO ─── */
-    header {
-      padding: 80px 0 64px;
-      position: relative;
-    }
-
-    .hero-label {
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      color: var(--accent);
-      text-transform: uppercase;
-      margin-bottom: 20px;
-      opacity: 0;
-      animation: fadeUp 0.6s ease forwards 0.1s;
-    }
-
-    h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(48px, 8vw, 88px);
-      font-weight: 800;
-      line-height: 0.95;
-      letter-spacing: -0.03em;
-      color: var(--text);
-      opacity: 0;
-      animation: fadeUp 0.7s ease forwards 0.2s;
-    }
-
-    h1 span {
-      display: block;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .hero-sub {
-      margin-top: 24px;
-      color: var(--muted);
-      font-size: 13px;
-      max-width: 480px;
-      opacity: 0;
-      animation: fadeUp 0.7s ease forwards 0.35s;
-    }
-
-    .hero-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 24px;
-      margin-top: 36px;
-      opacity: 0;
-      animation: fadeUp 0.7s ease forwards 0.45s;
-    }
-
-    .hero-meta a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 12px;
-      letter-spacing: 0.05em;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
-      gap: 7px;
-      transition: color 0.2s;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 56px;
+      transition: background var(--transition), border-color var(--transition);
     }
 
-    .hero-meta a:hover { color: var(--accent); }
-
-    .hero-meta .dot {
-      width: 4px; height: 4px;
-      border-radius: 50%;
-      background: var(--accent);
-      flex-shrink: 0;
-    }
-
-    /* DIVIDER */
-    .divider {
-      height: 1px;
-      background: linear-gradient(90deg, var(--accent) 0%, var(--accent2) 50%, transparent 100%);
-      opacity: 0.25;
-      margin: 8px 0 64px;
-    }
-
-    /* ─── SECTIONS ─── */
-    section {
-      margin-bottom: 72px;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
-    }
-
-    section.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .section-header {
+    .topbar-left {
       display: flex;
       align-items: center;
       gap: 14px;
+    }
+
+    .logo-box {
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--border2);
+      background: var(--bg2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .logo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .logo-ph {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      color: var(--text3);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .topbar-name {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--text);
+    }
+
+    .topbar-name span { color: var(--red); }
+
+    .theme-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--text2);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 6px 14px;
+      cursor: pointer;
+      transition: all var(--transition);
+      letter-spacing: 0.05em;
+    }
+
+    .theme-btn:hover {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    /* ── LAYOUT ── */
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    /* ── HERO ── */
+    header {
+      padding-top: 100px;
+      padding-bottom: 72px;
+      display: grid;
+      grid-template-columns: 1fr 210px;
+      gap: 56px;
+      align-items: end;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--red);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: up 0.7s ease forwards 0.05s;
+    }
+
+    .hero-tag::before {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 1px;
+      background: var(--red);
+    }
+
+    h1 {
+      font-size: clamp(52px, 8vw, 82px);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      opacity: 0;
+      animation: up 0.7s ease forwards 0.15s;
+    }
+
+    h1 em {
+      font-style: normal;
+      color: var(--red);
+    }
+
+    .hero-role {
+      font-size: 13px;
+      font-weight: 400;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text2);
+      letter-spacing: 0.06em;
+      margin-top: 18px;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: up 0.7s ease forwards 0.25s;
+    }
+
+    .hero-contacts {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      opacity: 0;
+      animation: up 0.7s ease forwards 0.35s;
+    }
+
+    .hero-contacts a {
+      font-size: 13px;
+      color: var(--text2);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: color var(--transition);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.03em;
+    }
+
+    .hero-contacts a:hover { color: var(--red); }
+
+    .hero-contacts a::before {
+      content: '›';
+      color: var(--red);
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    /* ── PORTRAIT ── */
+    .portrait-wrap {
+      opacity: 0;
+      animation: up 0.7s ease forwards 0.4s;
+    }
+
+    .portrait {
+      width: 210px;
+      aspect-ratio: 3/4;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .portrait::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 2px solid var(--red);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .portrait:hover::after { opacity: 1; }
+
+    .portrait img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      filter: grayscale(100%) contrast(1.05);
+      display: block;
+      transition: filter 0.4s;
+    }
+
+    .portrait:hover img { filter: grayscale(0%) contrast(1); }
+
+    .portrait-ph {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      color: var(--text3);
+    }
+
+    .portrait-ph-ring {
+      width: 52px;
+      height: 52px;
+      border: 1px dashed var(--border2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .portrait-ph span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    /* ── DIVIDER AFTER HERO ── */
+    .hero-rule {
+      height: 1px;
+      background: linear-gradient(90deg, var(--red) 0%, var(--red-dim) 30%, var(--border) 100%);
+      margin-bottom: 72px;
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      margin-bottom: 80px;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+
+    section.visible { opacity: 1; transform: none; }
+
+    .sec-head {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
       margin-bottom: 36px;
     }
 
-    .section-label {
-      font-size: 10px;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--accent);
+    .sec-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--red);
+      letter-spacing: 0.1em;
+      flex-shrink: 0;
     }
 
-    .section-line {
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    .sec-line {
       flex: 1;
       height: 1px;
       background: var(--border);
     }
 
-    h2 {
-      font-family: 'Syne', sans-serif;
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--text);
-      margin-right: auto;
-    }
+    /* ── TIMELINE ── */
+    .tl { display: flex; flex-direction: column; }
 
-    /* ─── TIMELINE ─── */
-    .timeline {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-
-    .tl-item {
+    .tl-row {
       display: grid;
-      grid-template-columns: 160px 1fr;
-      gap: 0 32px;
+      grid-template-columns: 148px 1fr;
+      gap: 0 36px;
+      padding-bottom: 44px;
       position: relative;
     }
 
-    .tl-item::before {
+    .tl-row::before {
       content: '';
       position: absolute;
-      left: 160px;
-      top: 10px;
+      left: 148px;
+      top: 8px;
       bottom: 0;
       width: 1px;
       background: var(--border);
-      transform: translateX(-50%);
     }
 
-    .tl-item:last-child::before { display: none; }
+    .tl-row:last-child::before { display: none; }
 
-    .tl-date {
-      padding-top: 10px;
-      padding-bottom: 32px;
-      text-align: right;
-      color: var(--muted);
-      font-size: 11px;
-      letter-spacing: 0.05em;
-      line-height: 1.4;
-    }
-
-    .tl-content {
-      padding-left: 28px;
-      padding-bottom: 40px;
-      position: relative;
-    }
-
-    .tl-content::before {
+    .tl-row::after {
       content: '';
       position: absolute;
-      left: -5px;
-      top: 10px;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--bg);
-      border: 1.5px solid var(--accent);
-      box-shadow: 0 0 12px rgba(91,140,255,0.4);
+      left: calc(148px - 4px);
+      top: 8px;
+      width: 9px;
+      height: 9px;
+      background: var(--red);
+      border-radius: 0;
+      rotate: 45deg;
     }
 
+    .tl-date {
+      text-align: right;
+      padding-top: 1px;
+      padding-right: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text3);
+      letter-spacing: 0.04em;
+      line-height: 1.6;
+    }
+
+    .tl-body { padding-left: 24px; }
+
     .tl-role {
-      font-family: 'Syne', sans-serif;
-      font-size: 15px;
-      font-weight: 700;
+      font-size: 16px;
+      font-weight: 600;
       color: var(--text);
       margin-bottom: 3px;
     }
 
     .tl-company {
-      font-size: 11px;
-      color: var(--accent);
-      letter-spacing: 0.1em;
-      margin-bottom: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 14px;
     }
 
-    .tl-bullets {
+    .tl-list {
       list-style: none;
       display: flex;
       flex-direction: column;
       gap: 5px;
     }
 
-    .tl-bullets li {
-      font-size: 12.5px;
-      color: var(--muted);
+    .tl-list li {
+      font-size: 13.5px;
+      color: var(--text2);
       display: flex;
-      align-items: flex-start;
       gap: 10px;
     }
 
-    .tl-bullets li::before {
-      content: '→';
-      color: var(--accent);
+    .tl-list li::before {
+      content: '—';
+      color: var(--border2);
       flex-shrink: 0;
-      margin-top: 1px;
-      font-size: 11px;
+      font-size: 12px;
+      margin-top: 2px;
     }
 
-    /* ─── SKILLS GRID ─── */
-    .skills-grid {
+    /* ── EDUCATION ── */
+    .edu { display: flex; flex-direction: column; }
+
+    .edu-row {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 2px;
-    }
-
-    .skill-block {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 20px;
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.2s, background 0.2s;
-    }
-
-    .skill-block:hover {
-      border-color: rgba(91,140,255,0.4);
-      background: #13151c;
-    }
-
-    .skill-block::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(91,140,255,0.04), transparent);
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-
-    .skill-block:hover::after { opacity: 1; }
-
-    .skill-category {
-      font-size: 10px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--accent2);
-      margin-bottom: 10px;
-    }
-
-    .skill-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-    }
-
-    .tag {
-      font-size: 11px;
-      color: var(--text);
-      background: var(--tag-bg);
-      border: 1px solid var(--border);
-      padding: 3px 8px;
-      border-radius: 3px;
-      letter-spacing: 0.03em;
-    }
-
-    /* ─── EDUCATION ─── */
-    .edu-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .edu-item {
-      display: grid;
-      grid-template-columns: 160px 1fr;
-      gap: 0 32px;
-      padding: 20px 0;
+      grid-template-columns: 148px 1fr;
+      gap: 0 36px;
+      padding: 22px 0;
       border-bottom: 1px solid var(--border);
     }
 
-    .edu-item:last-child { border-bottom: none; }
+    .edu-row:last-child { border-bottom: none; }
 
     .edu-date {
+      font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
-      color: var(--muted);
-      padding-top: 2px;
+      color: var(--text3);
+      letter-spacing: 0.04em;
+      padding-top: 3px;
     }
 
-    .edu-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
+    .edu-deg {
+      font-size: 15px;
+      font-weight: 600;
       color: var(--text);
       margin-bottom: 3px;
     }
 
     .edu-school {
-      font-size: 11px;
-      color: var(--accent);
-      letter-spacing: 0.08em;
-      margin-bottom: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 5px;
     }
 
-    .edu-note {
-      font-size: 12px;
-      color: var(--muted);
-    }
+    .edu-note { font-size: 13px; color: var(--text2); }
 
-    /* ─── LANGUAGES ─── */
-    .lang-row {
-      display: flex;
-      gap: 24px;
-      flex-wrap: wrap;
-    }
+    /* ── SKILLS ── */
+    .skills-rows { display: flex; flex-direction: column; }
 
-    .lang-item {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 16px 28px;
-      display: flex;
-      flex-direction: column;
+    .skill-row {
+      display: grid;
+      grid-template-columns: 148px 1fr;
+      gap: 0 36px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
       align-items: center;
-      gap: 4px;
     }
 
-    .lang-name {
-      font-family: 'Syne', sans-serif;
-      font-size: 15px;
-      font-weight: 700;
+    .skill-row:last-child { border-bottom: none; }
+
+    .skill-cat {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text3);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
     }
 
-    .lang-level {
-      font-size: 11px;
-      color: var(--muted);
-      letter-spacing: 0.1em;
+    .pills { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .pill {
+      font-size: 12.5px;
+      font-weight: 400;
+      color: var(--text2);
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 4px 11px;
+      transition: all var(--transition);
     }
 
-    /* ─── INTERESTS ─── */
-    .interests {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+    .pill:hover {
+      background: var(--red-glow);
+      border-color: var(--red-dim);
+      color: var(--text);
     }
 
-    .interest-tag {
-      font-size: 12px;
-      color: var(--accent);
-      border: 1px solid rgba(91,140,255,0.3);
+    /* ── LANGUAGES ── */
+    .lang-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .lang-card {
+      border: 1px solid var(--border);
+      background: var(--bg2);
+      padding: 20px 32px;
+      min-width: 140px;
+      transition: border-color var(--transition);
+    }
+
+    .lang-card:hover { border-color: var(--red-dim); }
+
+    .lang-n {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .lang-l {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text3);
+    }
+
+    /* ── INTERESTS ── */
+    .int-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .int-tag {
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text2);
+      border: 1px solid var(--border);
       padding: 6px 16px;
-      border-radius: 999px;
+      transition: all var(--transition);
+      letter-spacing: 0.02em;
+    }
+
+    .int-tag:hover {
+      border-color: var(--red);
+      color: var(--text);
+      background: var(--red-glow);
+    }
+
+    /* ── PROJECT ── */
+    .project-intro {
+      font-size: 14px;
+      color: var(--text2);
+      line-height: 1.8;
+      max-width: 640px;
+      margin-bottom: 32px;
+    }
+
+    .project-intro a {
+      color: var(--red);
+      text-decoration: none;
+      border-bottom: 1px solid var(--red-dim);
+      transition: border-color var(--transition), opacity var(--transition);
+    }
+
+    .project-intro a:hover { opacity: 0.75; }
+
+    .arch-flow {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0;
+      margin-bottom: 36px;
+    }
+
+    .arch-node {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text2);
       letter-spacing: 0.05em;
-      background: rgba(91,140,255,0.05);
-      transition: background 0.2s, border-color 0.2s;
+      white-space: nowrap;
+      transition: border-color var(--transition), color var(--transition);
     }
 
-    .interest-tag:hover {
-      background: rgba(91,140,255,0.12);
-      border-color: rgba(91,140,255,0.6);
+    .arch-node:hover { border-color: var(--red-dim); color: var(--text); }
+    .arch-node.hl { border-color: var(--red-dim); color: var(--red); background: var(--red-glow); }
+
+    .arch-arrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text3);
+      padding: 0 4px;
+      flex-shrink: 0;
     }
 
-    /* ─── FOOTER ─── */
+    .project-tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 2px;
+    }
+
+    .tech-block {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 16px 18px;
+      transition: border-color var(--transition);
+    }
+
+    .tech-block:hover { border-color: var(--red-dim); }
+
+    .tech-block-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 10px;
+    }
+
+    .tech-block .pills { gap: 5px; }
+
+    /* ── IMPRESSUM ── */
+    .imp-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+    }
+
+    .imp-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 12px;
+    }
+
+    .imp-body {
+      font-size: 13.5px;
+      color: var(--text2);
+      line-height: 1.9;
+    }
+
+    .imp-body a {
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      transition: border-color var(--transition), color var(--transition);
+    }
+
+    .imp-body a:hover { border-color: var(--red); color: var(--red); }
+
+    .imp-note {
+      margin-top: 28px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text3);
+      letter-spacing: 0.04em;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+    }
+
+    /* ── FOOTER ── */
     footer {
       border-top: 1px solid var(--border);
-      padding: 36px 0 60px;
+      padding: 28px 0 60px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
     }
 
-    .footer-name {
-      font-family: 'Syne', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--muted);
+    .ft-l {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text2);
     }
 
-    .footer-note {
-      font-size: 11px;
-      color: var(--border);
-      letter-spacing: 0.1em;
+    .ft-l span { color: var(--red); }
+
+    .ft-r {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text3);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
     }
 
-    /* ─── ANIMATIONS ─── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to   { opacity: 1; transform: translateY(0); }
+    /* ── ANIMATIONS ── */
+    @keyframes up {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: none; }
     }
 
-    /* ─── RESPONSIVE ─── */
-    @media (max-width: 600px) {
-      .tl-item, .edu-item {
-        grid-template-columns: 1fr;
-      }
-      .tl-date, .edu-date {
-        text-align: left;
-        padding-bottom: 6px;
-      }
-      .tl-item::before { display: none; }
-      .tl-content { padding-left: 0; }
-      .tl-content::before { display: none; }
-      .skills-grid { grid-template-columns: 1fr; }
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .topbar { padding: 0 20px; }
+      .page { padding: 0 20px; }
+      header { grid-template-columns: 1fr; padding-top: 84px; gap: 32px; }
+      .portrait { width: 130px; }
+      .portrait-wrap { order: -1; }
+      .tl-row, .edu-row, .skill-row { grid-template-columns: 1fr; }
+      .tl-row::before, .tl-row::after { display: none; }
+      .tl-date, .edu-date { text-align: left; }
+      .tl-body { padding-left: 0; }
+      .imp-grid { grid-template-columns: 1fr; gap: 28px; }
     }
   </style>
 </head>
 <body>
-<div class="wrapper">
+
+<!-- TOPBAR -->
+<nav class="topbar">
+  <div class="topbar-left">
+    <div class="logo-box">
+      <img src="/website/assets/images/logo_v1.png" alt="Logo"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+      <div class="logo-ph" style="display:none;">LOGO</div>
+    </div>
+    <span class="topbar-name">Timon <span>Weides</span></span>
+  </div>
+
+  <button class="theme-btn" id="themeBtn" aria-label="Theme wechseln">
+    <span id="themeIcon">☀</span>
+    <span id="themeLabel">Light</span>
+  </button>
+</nav>
+
+<div class="page">
 
   <!-- HERO -->
   <header>
-    <p class="hero-label">// Curriculum Vitae</p>
-    <h1>
-      Test<br>
-      <span>Nummer 3</span>
-    </h1>
-    <p class="hero-sub">
-      IT-Administrator bei hagel IT-Services GmbH — auf dem Weg zum DevOps &amp; Cloud Engineer. Spezialisiert auf M365, Windows Infrastructure und Container-Technologien.
-    </p>
-    <div class="hero-meta">
-      <a href="mailto:timonweides@live.de"><span class="dot"></span>timonweides@live.de</a>
-      <a href="tel:+4917347049664"><span class="dot"></span>+49 173 4704964</a>
-      <a href="#"><span class="dot"></span>Langenfeld, Deutschland</a>
+    <div>
+      <div class="hero-tag">Cloud CV</div>
+      <h1>Timon<br><em>Weides</em></h1>
+      <p class="hero-role">IT-Administrator</p>
+      <div class="hero-contacts">
+        <a href="mailto:timonweides@live.de">timonweides@live.de</a>
+        <a href="tel:+4917347049664">+49 173 4704964</a>
+        <a href="#">Langenfeld (Rheinland), DE</a>
+      </div>
+    </div>
+
+    <div class="portrait-wrap">
+      <div class="portrait">
+        <img src="assets/images/portrait.png" alt="Timon Weides"
+          onerror="this.style.display='none';document.getElementById('portrait-ph').style.display='flex';" />
+        <div class="portrait-ph" id="portrait-ph" style="display:none;">
+          <div class="portrait-ph-ring">&#128100;</div>
+          <span>portrait.png<br>hier ablegen</span>
+        </div>
+      </div>
     </div>
   </header>
 
-  <div class="divider"></div>
+  <div class="hero-rule"></div>
+
+  <!-- PROJEKT -->
+  <section id="project">
+    <div class="sec-head">
+      <span class="sec-num">// 00</span>
+      <h2>Über dieses Projekt</h2>
+      <div class="sec-line"></div>
+    </div>
+
+    <p class="project-intro">
+      Diese Website ist kein einfacher Lebenslauf — sie ist selbst ein DevOps-Projekt.
+      Der gesamte Code liegt auf <a href="https://github.com/Timon-Weides/IT-CV/tree/main" target="_blank" rel="noopener">GitHub</a> und wird bei jedem Push auf den Main-Branch vollautomatisch über eine CI/CD-Pipeline auf AWS deployed. <br>
+      Ziel ist die praktische Demonstration moderner Cloud- und DevOps-Konzepte in einer produktiven Umgebung. <br>
+      Weitere Informationen zum Projekt, der Architektur und den verwendeten Technologien finden Sie in der ReadMe-Datei im Github-Repository.
+    </p>
+
+<svg width="100%" viewBox="0 0 680 410" style="margin-bottom: 36px; display: block;">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- NODE 1: GitHub Repo -->
+  <rect x="240" y="20" width="200" height="44" rx="3" fill="var(--red-glow)" stroke="var(--red)" stroke-width="1"/>
+  <text x="340" y="39" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="13" fill="var(--red)" font-weight="600">GitHub Repo</text>
+  <text x="340" y="55" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="var(--red)" letter-spacing="1" opacity="0.7">TRIGGER: push to main</text>
+
+  <line x1="340" y1="64" x2="340" y2="84" stroke="var(--text3)" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow)"/>
+
+  <!-- NODE 2: GitHub Actions -->
+  <rect x="256" y="84" width="168" height="36" rx="3" fill="none" stroke="var(--border2)" stroke-width="0.5"/>
+  <text x="340" y="106" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--text2)">GitHub Actions</text>
+
+  <!-- Fork -->
+  <path d="M340 120 L340 140 L240 140 M340 140 L440 140" fill="none" stroke="var(--text3)" stroke-width="0.5" stroke-dasharray="3 3"/>
+  <line x1="240" y1="140" x2="240" y2="156" stroke="var(--text3)" stroke-width="0.5" marker-end="url(#arrow)"/>
+  <line x1="440" y1="140" x2="440" y2="156" stroke="var(--text3)" stroke-width="0.5" marker-end="url(#arrow)"/>
+
+  <!-- NODE 3a: Terraform -->
+  <rect x="164" y="156" width="152" height="48" rx="3" fill="none" stroke="var(--border2)" stroke-width="0.5"/>
+  <text x="240" y="174" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--text)">Terraform</text>
+  <text x="240" y="192" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="9" fill="var(--text3)" letter-spacing="1">VALIDATE &amp; PLAN</text>
+
+  <!-- NODE 3b: Trivy -->
+  <rect x="364" y="156" width="152" height="48" rx="3" fill="none" stroke="var(--border2)" stroke-width="0.5"/>
+  <text x="440" y="174" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--text)">Trivy</text>
+  <text x="440" y="192" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="9" fill="var(--text3)" letter-spacing="1">SECURITY SCAN</text>
+
+  <!-- Merge -->
+  <line x1="240" y1="204" x2="240" y2="224" stroke="var(--text3)" stroke-width="0.5" stroke-dasharray="3 3"/>
+  <line x1="440" y1="204" x2="440" y2="224" stroke="var(--text3)" stroke-width="0.5" stroke-dasharray="3 3"/>
+  <path d="M240 224 L340 224 L440 224" fill="none" stroke="var(--text3)" stroke-width="0.5" stroke-dasharray="3 3"/>
+  <line x1="340" y1="224" x2="340" y2="244" stroke="var(--text3)" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="356" y="236" font-family="'JetBrains Mono', monospace" font-size="9" fill="var(--text3)" letter-spacing="1">DEPLOY</text>
+
+  <!-- NODE 4: AWS S3 -->
+  <rect x="276" y="244" width="128" height="36" rx="3" fill="none" stroke="var(--border2)" stroke-width="0.5"/>
+  <text x="340" y="262" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--text2)">AWS S3</text>
+
+  <!-- S3 fork -->
+  <path d="M340 280 L340 290 L260 290 M340 290 L420 290" fill="none" stroke="var(--text3)" stroke-width="0.5"/>
+  <line x1="260" y1="290" x2="260" y2="296" stroke="var(--text3)" stroke-width="0.5" marker-end="url(#arrow)"/>
+  <line x1="420" y1="290" x2="420" y2="296" stroke="var(--text3)" stroke-width="0.5" marker-end="url(#arrow)"/>
+
+  <!-- NODE 5a: CloudFront -->
+  <rect x="196" y="296" width="128" height="36" rx="3" fill="none" stroke="var(--border2)" stroke-width="0.5"/>
+  <text x="260" y="314" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--text2)">CloudFront</text>
+
+  <!-- NODE 5b: Route 53 -->
+  <rect x="356" y="296" width="128" height="36" rx="3" fill="none" stroke="var(--border2)" stroke-width="0.5"/>
+  <text x="420" y="314" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--text2)">Route 53</text>
+
+  <!-- Merge to final -->
+  <line x1="260" y1="332" x2="260" y2="352" stroke="var(--text3)" stroke-width="0.5" stroke-dasharray="3 3"/>
+  <line x1="420" y1="332" x2="420" y2="352" stroke="var(--text3)" stroke-width="0.5" stroke-dasharray="3 3"/>
+  <path d="M260 352 L340 352 L420 352" fill="none" stroke="var(--text3)" stroke-width="0.5" stroke-dasharray="3 3"/>
+  <line x1="340" y1="352" x2="340" y2="362" stroke="var(--red)" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- NODE 6: timonweides.de -->
+  <rect x="220" y="362" width="240" height="44" rx="3" fill="var(--red-glow)" stroke="var(--red)" stroke-width="1"/>
+  <text x="340" y="381" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="14" fill="var(--red)" font-weight="600">timonweides.de</text>
+  <text x="340" y="397" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="9" fill="var(--red)" opacity="0.6" letter-spacing="1">HTTPS · CDN · DNS</text>
+</svg>
+
+    <div class="project-tech-grid">
+      <div class="tech-block">
+        <div class="tech-block-label">Cloud</div>
+        <div class="pills">
+          <span class="pill">AWS S3</span>
+          <span class="pill">CloudFront</span>
+          <span class="pill">Route 53</span>
+          <span class="pill">ACM</span>
+        </div>
+      </div>
+      <div class="tech-block">
+        <div class="tech-block-label">IaC</div>
+        <div class="pills">
+          <span class="pill">Terraform</span>
+        </div>
+      </div>
+      <div class="tech-block">
+        <div class="tech-block-label">CI/CD</div>
+        <div class="pills">
+          <span class="pill">GitHub Actions</span>
+        </div>
+      </div>
+      <div class="tech-block">
+        <div class="tech-block-label">Security</div>
+        <div class="pills">
+          <span class="pill">Trivy Scanner</span>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- BERUFSERFAHRUNG -->
   <section id="experience">
-    <div class="section-header">
-      <span class="section-label">01</span>
+    <div class="sec-head">
+      <span class="sec-num">// 01</span>
       <h2>Berufserfahrung</h2>
-      <div class="section-line"></div>
+      <div class="sec-line"></div>
     </div>
+    <div class="tl">
 
-    <div class="timeline">
-      <div class="tl-item">
+      <div class="tl-row">
         <div class="tl-date">12/2022<br>— laufend</div>
-        <div class="tl-content">
+        <div class="tl-body">
           <div class="tl-role">IT-Administrator</div>
           <div class="tl-company">hagel IT-Services GmbH · Hamburg (100% remote)</div>
-          <ul class="tl-bullets">
+          <ul class="tl-list">
             <li>Betreuung und Fehleranalyse von Microsoft 365 Umgebungen</li>
             <li>Administration von Windows-Servern, Hyper-V-Hosts und Netzwerk-Infrastruktur</li>
             <li>Erstellung und Pflege von Dokumentationen</li>
-            <li>Betrieb von Arbeitsplatz- und Anwendungsumgebungen</li>
-            <li>Monitoring von Server- und Client-Systemen</li>
+            <li>Monitoring von Server- und Client-Systemen zur Betriebsstabilität</li>
             <li>Analyse und Behebung von Störungen in Client- und Netzwerkumgebungen</li>
+            <li>Troubleshooting und Fehleranalyse im Bereich VoIP und Cloud-Telefonie</li>
+            <li>Verwaltung von Exchange Online und Mailflow-Problemen</li>
+            <li>Analyse und Bearbeitung von Sicherheitsvorfällen sowie Sicherheitsmaßnahmen</li>
+            <li>Durchführung von Systemwartungen, Updates und Patch-Management</li>
+            <li>Zusammenarbeit mit Herstellern und externen Dienstleistern zur Fehlerbehebung</li>
           </ul>
         </div>
       </div>
 
-      <div class="tl-item">
+      <div class="tl-row">
         <div class="tl-date">07/2022<br>— 12/2022</div>
-        <div class="tl-content">
+        <div class="tl-body">
           <div class="tl-role">Systemadministrator</div>
           <div class="tl-company">Bohle AG · Haan</div>
-          <ul class="tl-bullets">
+          <ul class="tl-list">
             <li>Betreuung von Microsoft 365-, Exchange- und Azure-Umgebungen</li>
             <li>Anwender-Support für Microsoft 365 und Windows</li>
             <li>Durchführung von IT-Projekten</li>
@@ -540,51 +915,51 @@
         </div>
       </div>
 
-      <div class="tl-item">
+      <div class="tl-row">
         <div class="tl-date">08/2017<br>— 07/2019</div>
-        <div class="tl-content">
+        <div class="tl-body">
           <div class="tl-role">Technical Support &amp; Community-Management</div>
-          <div class="tl-company">Sykes Enterprises · HUAWEI — Bochum / Solingen</div>
-          <ul class="tl-bullets">
+          <div class="tl-company">Sykes Enterprises · HUAWEI — Solingen</div>
+          <ul class="tl-list">
             <li>Support für alle HUAWEI- und HONOR-Consumer Produkte</li>
             <li>Klärung von Eskalationsfällen</li>
-            <li>Schulung von Mitarbeitern in Kunden-Kommunikation (Social Media, Chat, E-Mail)</li>
+            <li>Schulung von Mitarbeitern in Kunden-Kommunikation</li>
             <li>Community-Management auf allen Social-Media-Plattformen</li>
           </ul>
         </div>
       </div>
+
     </div>
   </section>
 
   <!-- AUSBILDUNG -->
   <section id="education">
-    <div class="section-header">
-      <span class="section-label">02</span>
+    <div class="sec-head">
+      <span class="sec-num">// 02</span>
       <h2>Ausbildung</h2>
-      <div class="section-line"></div>
+      <div class="sec-line"></div>
     </div>
-
-    <div class="edu-grid">
-      <div class="edu-item">
-        <div class="edu-date">08/2019 – 06/2022</div>
+    <div class="edu">
+      <div class="edu-row">
+        <div class="edu-date">08/2019<br>– 06/2022</div>
         <div>
-          <div class="edu-title">Fachinformatiker für Systemintegration</div>
+          <div class="edu-deg">Fachinformatiker für Systemintegration</div>
           <div class="edu-school">Schneidereit GmbH</div>
-          <div class="edu-note">Anwender-Support, Projektumsetzung, Client-Rollout, Hardware-Management</div>
+          <div class="edu-note">Support, Projektumsetzung, Client-Rollout, Hardware-Management</div>
         </div>
       </div>
-      <div class="edu-item">
-        <div class="edu-date">08/2013 – 06/2017</div>
+      <div class="edu-row">
+        <div class="edu-date">08/2013<br>– 06/2017</div>
         <div>
-          <div class="edu-title">Informationstechnischer Assistent mit Fachabitur</div>
+          <div class="edu-deg">Informationstechnischer Assistent mit Fachabitur</div>
           <div class="edu-school">Technisches Berufskolleg, Solingen</div>
           <div class="edu-note">Programmierung, Webdesign, Datenbanken, Elektrotechnik</div>
         </div>
       </div>
-      <div class="edu-item">
-        <div class="edu-date">08/2007 – 06/2013</div>
+      <div class="edu-row">
+        <div class="edu-date">08/2007<br>– 06/2013</div>
         <div>
-          <div class="edu-title">Mittlerer Schulabschluss</div>
+          <div class="edu-deg">Mittlerer Schulabschluss</div>
           <div class="edu-school">Alexander-Coppel-Gesamtschule, Solingen</div>
           <div class="edu-note">Leistungsfächer: Physik und Englisch</div>
         </div>
@@ -594,140 +969,105 @@
 
   <!-- SKILLS -->
   <section id="skills">
-    <div class="section-header">
-      <span class="section-label">03</span>
+    <div class="sec-head">
+      <span class="sec-num">// 03</span>
       <h2>Fähigkeiten &amp; Kenntnisse</h2>
-      <div class="section-line"></div>
+      <div class="sec-line"></div>
     </div>
-
-    <div class="skills-grid">
-      <div class="skill-block">
-        <div class="skill-category">Microsoft 365</div>
-        <div class="skill-tags">
-          <span class="tag">Exchange Online</span>
-          <span class="tag">SharePoint</span>
-          <span class="tag">Teams</span>
-          <span class="tag">Intune</span>
-        </div>
-      </div>
-      <div class="skill-block">
-        <div class="skill-category">Identity &amp; Security</div>
-        <div class="skill-tags">
-          <span class="tag">Entra ID</span>
-          <span class="tag">MFA</span>
-          <span class="tag">Conditional Access</span>
-          <span class="tag">Sentinel One</span>
-          <span class="tag">Defender</span>
-        </div>
-      </div>
-      <div class="skill-block">
-        <div class="skill-category">Windows Server</div>
-        <div class="skill-tags">
-          <span class="tag">Active Directory</span>
-          <span class="tag">DNS</span>
-          <span class="tag">DHCP</span>
-          <span class="tag">GPO</span>
-          <span class="tag">Hyper-V</span>
-        </div>
-      </div>
-      <div class="skill-block">
-        <div class="skill-category">Container &amp; Orchestrierung</div>
-        <div class="skill-tags">
-          <span class="tag">Docker</span>
-          <span class="tag">Kubernetes</span>
-          <span class="tag">Helm</span>
-        </div>
-      </div>
-      <div class="skill-block">
-        <div class="skill-category">Scripting</div>
-        <div class="skill-tags">
-          <span class="tag">Bash</span>
-          <span class="tag">PowerShell</span>
-        </div>
-      </div>
-      <div class="skill-block">
-        <div class="skill-category">Programmiersprachen</div>
-        <div class="skill-tags">
-          <span class="tag">Python</span>
-          <span class="tag">Go</span>
-          <span class="tag">C#</span>
-        </div>
-      </div>
-      <div class="skill-block">
-        <div class="skill-category">Backup</div>
-        <div class="skill-tags">
-          <span class="tag">Veeam</span>
-          <span class="tag">Cove Data Protection</span>
-        </div>
-      </div>
-      <div class="skill-block">
-        <div class="skill-category">Betriebssysteme</div>
-        <div class="skill-tags">
-          <span class="tag">Windows</span>
-          <span class="tag">macOS</span>
-          <span class="tag">Ubuntu</span>
-          <span class="tag">Debian</span>
-          <span class="tag">CentOS</span>
-        </div>
-      </div>
+    <div class="skills-rows">
+      <div class="skill-row"><div class="skill-cat">Microsoft 365</div><div class="pills"><span class="pill">Exchange Online</span><span class="pill">SharePoint</span><span class="pill">Teams</span><span class="pill">Intune</span></div></div>
+      <div class="skill-row"><div class="skill-cat">Identity &amp; Security</div><div class="pills"><span class="pill">Entra ID</span><span class="pill">MFA</span><span class="pill">Conditional Access</span><span class="pill">Sentinel One</span><span class="pill">Defender</span></div></div>
+      <div class="skill-row"><div class="skill-cat">Windows Server</div><div class="pills"><span class="pill">Active Directory</span><span class="pill">DNS</span><span class="pill">DHCP</span><span class="pill">GPO</span><span class="pill">Hyper-V</span></div></div>
+      <div class="skill-row"><div class="skill-cat">Container &amp; Orch.</div><div class="pills"><span class="pill">Docker</span><span class="pill">Kubernetes</span><span class="pill">Helm</span><span class="pill">Terraform</span></div></div>
+      <div class="skill-row"><div class="skill-cat">Scripting</div><div class="pills"><span class="pill">Bash</span><span class="pill">PowerShell</span></div></div>
+      <div class="skill-row"><div class="skill-cat">Programmierung</div><div class="pills"><span class="pill">Python</span><span class="pill">Go</span><span class="pill">C#</span></div></div>
+      <div class="skill-row"><div class="skill-cat">Backup</div><div class="pills"><span class="pill">Veeam</span><span class="pill">Cove Data Protection</span></div></div>
+      <div class="skill-row"><div class="skill-cat">Betriebssysteme</div><div class="pills"><span class="pill">Windows</span><span class="pill">macOS</span><span class="pill">Ubuntu</span><span class="pill">Debian</span><span class="pill">CentOS</span></div></div>
     </div>
   </section>
 
   <!-- SPRACHEN -->
   <section id="languages">
-    <div class="section-header">
-      <span class="section-label">04</span>
+    <div class="sec-head">
+      <span class="sec-num">// 04</span>
       <h2>Sprachen</h2>
-      <div class="section-line"></div>
+      <div class="sec-line"></div>
     </div>
     <div class="lang-row">
-      <div class="lang-item">
-        <div class="lang-name">Deutsch</div>
-        <div class="lang-level">Muttersprache</div>
-      </div>
-      <div class="lang-item">
-        <div class="lang-name">Englisch</div>
-        <div class="lang-level">Fließend</div>
-      </div>
+      <div class="lang-card"><div class="lang-n">Deutsch</div><div class="lang-l">Muttersprache</div></div>
+      <div class="lang-card"><div class="lang-n">Englisch</div><div class="lang-l">Fließend</div></div>
     </div>
   </section>
 
   <!-- INTERESSEN -->
   <section id="interests">
-    <div class="section-header">
-      <span class="section-label">05</span>
+    <div class="sec-head">
+      <span class="sec-num">// 05</span>
       <h2>Interessen &amp; Hobbys</h2>
-      <div class="section-line"></div>
+      <div class="sec-line"></div>
     </div>
-    <div class="interests">
-      <span class="interest-tag">Musikproduktion</span>
-      <span class="interest-tag">Sounddesign</span>
-      <span class="interest-tag">Homelab</span>
-      <span class="interest-tag">Gaming</span>
-      <span class="interest-tag">Reisen</span>
+    <div class="int-row">
+      <span class="int-tag">Musikproduktion</span>
+      <span class="int-tag">Sounddesign</span>
+      <span class="int-tag">Homelab</span>
+      <span class="int-tag">Gaming</span>
+      <span class="int-tag">Reisen</span>
     </div>
   </section>
 
-  <!-- FOOTER -->
+  <!-- IMPRESSUM -->
+  <section id="impressum">
+    <div class="sec-head">
+      <span class="sec-num">// 06</span>
+      <h2>Impressum</h2>
+      <div class="sec-line"></div>
+    </div>
+    <div class="imp-grid">
+      <div>
+        <div class="imp-label">Angaben gemäß § 5 TMG</div>
+        <div class="imp-body">Timon Weides<br>Leipziger Weg 4<br>40764 Langenfeld (Rheinland)</div>
+      </div>
+      <div>
+        <div class="imp-label">Kontakt</div>
+        <div class="imp-body">
+          <a href="tel:+4917347049664">+49 173 4704964</a><br>
+          <a href="mailto:timonweides@live.de">timonweides@live.de</a>
+        </div>
+      </div>
+    </div>
+    <p class="imp-note">Diese Website dient ausschließlich der persönlichen Vorstellung. Es werden keine Waren oder Dienstleistungen angeboten.</p>
+  </section>
+
   <footer>
-    <span class="footer-name">Timon Weides</span>
-    <span class="footer-note">// STAND: 2026</span>
+    <span class="ft-l">Timon <span>Weides</span></span>
+    <span class="ft-r">Stand 2026</span>
   </footer>
 
 </div>
 
 <script>
-  // Intersection Observer for section reveal
-  const sections = document.querySelectorAll('section');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        observer.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.08 });
-  sections.forEach(s => observer.observe(s));
+  const html = document.documentElement;
+  const btn  = document.getElementById('themeBtn');
+  const icon = document.getElementById('themeIcon');
+  const lbl  = document.getElementById('themeLabel');
+
+  function applyTheme(t) {
+    html.dataset.theme = t;
+    icon.textContent = t === 'dark' ? '☀' : '☾';
+    lbl.textContent  = t === 'dark' ? 'Light' : 'Dark';
+  }
+
+  applyTheme(localStorage.getItem('theme') || 'dark');
+  btn.addEventListener('click', () => {
+    const next = html.dataset.theme === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    localStorage.setItem('theme', next);
+  });
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.07 });
+  document.querySelectorAll('section').forEach(s => obs.observe(s));
 </script>
 </body>
 </html>
