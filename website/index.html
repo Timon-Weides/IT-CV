@@ -1388,8 +1388,28 @@
 
 <script>
   /* ── LIVE DEPLOY PANEL ── */
-  function timeAgo(dateStr) {
-    const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+
+  // Parst "06.07.2026 02:24 UTC" oder ISO-Strings — gibt immer ein valides Date zurück
+  function parseDeployDate(str) {
+    if (!str) return null;
+
+    // Format: "DD.MM.YYYY HH:MM UTC" (GitHub Actions output)
+    const german = str.match(/^(\d{2})\.(\d{2})\.(\d{4})\s+(\d{2}):(\d{2})(?:\s+UTC)?$/);
+    if (german) {
+      const [, dd, mm, yyyy, hh, min] = german;
+      return new Date(Date.UTC(+yyyy, +mm - 1, +dd, +hh, +min));
+    }
+
+    // ISO fallback: ensure UTC if no timezone suffix
+    let iso = str;
+    if (!iso.endsWith('Z') && !iso.includes('+')) iso += 'Z';
+    const d = new Date(iso);
+    return isNaN(d) ? null : d;
+  }
+
+  function timeAgo(date) {
+    if (!date) return '';
+    const diff = Math.floor((Date.now() - date) / 1000);
     if (diff < 0)     return 'gerade deployed';
     if (diff < 60)    return 'gerade eben';
     if (diff < 3600)  return `vor ${Math.floor(diff / 60)} Min.`;
@@ -1398,9 +1418,10 @@
     return `vor ${days} Tag${days > 1 ? 'en' : ''}`;
   }
 
-  function formatSinceDeploy(dateStr) {
-    const diffSec = Math.floor((Date.now() - new Date(dateStr)) / 1000);
-    if (diffSec < 0) return '0m';               // guard: future timestamp
+  function formatSinceDeploy(date) {
+    if (!date) return '—';
+    const diffSec = Math.floor((Date.now() - date) / 1000);
+    if (diffSec < 0) return '0m';
     const d = Math.floor(diffSec / 86400);
     const h = Math.floor((diffSec % 86400) / 3600);
     const m = Math.floor((diffSec % 3600) / 60);
@@ -1409,36 +1430,34 @@
     return `${m}m`;
   }
 
-  function formatDeployDate(dateStr) {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('de-DE', {
-      day: '2-digit', month: '2-digit', year: 'numeric'
-    }) + ' ' + d.toLocaleTimeString('de-DE', {
-      hour: '2-digit', minute: '2-digit'
-    });
+  function formatDeployDate(date) {
+    if (!date) return 'N/A';
+    return date.toLocaleDateString('de-DE', {
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      timeZone: 'UTC'
+    }) + ' ' + date.toLocaleTimeString('de-DE', {
+      hour: '2-digit', minute: '2-digit',
+      timeZone: 'UTC'
+    }) + ' UTC';
   }
 
-  const deployDateEl  = document.getElementById('deploy-date');
-  const deployAgoEl   = document.getElementById('deploy-ago');
-  const uptimeEl      = document.getElementById('uptime-counter');
-  let deployedAt      = null;
+  const deployDateEl = document.getElementById('deploy-date');
+  const deployAgoEl  = document.getElementById('deploy-ago');
+  const uptimeEl     = document.getElementById('uptime-counter');
+  let deployDate     = null;
 
   fetch('deploy-info.json')
     .then(r => r.json())
     .then(data => {
-      // Normalize: ensure we always parse as UTC if no timezone given
-      let raw = data.deployed_at;
-      if (raw && !raw.endsWith('Z') && !raw.includes('+')) raw += 'Z';
-      deployedAt = raw;
+      deployDate = parseDeployDate(data.deployed_at);
 
-      if (deployDateEl) deployDateEl.innerHTML = formatDeployDate(deployedAt);
-      if (deployAgoEl)  deployAgoEl.textContent = timeAgo(deployedAt);
-      if (uptimeEl)     uptimeEl.textContent    = formatSinceDeploy(deployedAt);
+      if (deployDateEl) deployDateEl.innerHTML = formatDeployDate(deployDate);
+      if (deployAgoEl)  deployAgoEl.textContent = timeAgo(deployDate);
+      if (uptimeEl)     uptimeEl.textContent    = formatSinceDeploy(deployDate);
 
-      // tick every minute
       setInterval(() => {
-        if (deployAgoEl) deployAgoEl.textContent = timeAgo(deployedAt);
-        if (uptimeEl)    uptimeEl.textContent    = formatSinceDeploy(deployedAt);
+        if (deployAgoEl) deployAgoEl.textContent = timeAgo(deployDate);
+        if (uptimeEl)    uptimeEl.textContent    = formatSinceDeploy(deployDate);
       }, 60000);
     })
     .catch(() => {
