@@ -1173,7 +1173,7 @@
         </div>
       </div>
     </div>
-
+<br>
     <!-- LIVE STATUS PANEL -->
     <div class="live-panel">
       <div class="live-panel-header">
@@ -1184,6 +1184,7 @@
         <span class="live-panel-title">System Status</span>
         <a href="https://github.com/Timon-Weides/IT-CV/actions" target="_blank" rel="noopener" class="live-panel-link">GitHub Actions ↗</a>
       </div>
+      
       <div class="live-panel-body">
         <div class="live-metric">
           <span class="live-metric-label">Last Deployment</span>
@@ -1198,7 +1199,7 @@
         <div class="live-metric">
           <span class="live-metric-label">Uptime</span>
           <span class="live-metric-value" id="uptime-counter">—</span>
-          <span class="live-metric-sub">seit erstem Deploy</span>
+          <span class="live-metric-sub">seit letztem Deploy</span>
         </div>
         <div class="live-metric-divider"></div>
         <div class="live-metric">
@@ -1389,6 +1390,7 @@
   /* ── LIVE DEPLOY PANEL ── */
   function timeAgo(dateStr) {
     const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+    if (diff < 0)     return 'gerade deployed';
     if (diff < 60)    return 'gerade eben';
     if (diff < 3600)  return `vor ${Math.floor(diff / 60)} Min.`;
     if (diff < 86400) return `vor ${Math.floor(diff / 3600)} Std.`;
@@ -1396,12 +1398,13 @@
     return `vor ${days} Tag${days > 1 ? 'en' : ''}`;
   }
 
-  function formatUptime(deployedAt) {
-    const diff = Math.floor((Date.now() - new Date(deployedAt)) / 1000);
-    const d = Math.floor(diff / 86400);
-    const h = Math.floor((diff % 86400) / 3600);
-    const m = Math.floor((diff % 3600) / 60);
-    if (d > 0) return `${d}d ${h}h ${m}m`;
+  function formatSinceDeploy(dateStr) {
+    const diffSec = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+    if (diffSec < 0) return '0m';               // guard: future timestamp
+    const d = Math.floor(diffSec / 86400);
+    const h = Math.floor((diffSec % 86400) / 3600);
+    const m = Math.floor((diffSec % 3600) / 60);
+    if (d > 0) return `${d}d ${h}h`;
     if (h > 0) return `${h}h ${m}m`;
     return `${m}m`;
   }
@@ -1423,15 +1426,19 @@
   fetch('deploy-info.json')
     .then(r => r.json())
     .then(data => {
-      deployedAt = data.deployed_at;
+      // Normalize: ensure we always parse as UTC if no timezone given
+      let raw = data.deployed_at;
+      if (raw && !raw.endsWith('Z') && !raw.includes('+')) raw += 'Z';
+      deployedAt = raw;
+
       if (deployDateEl) deployDateEl.innerHTML = formatDeployDate(deployedAt);
       if (deployAgoEl)  deployAgoEl.textContent = timeAgo(deployedAt);
-      if (uptimeEl)     uptimeEl.textContent    = formatUptime(deployedAt);
+      if (uptimeEl)     uptimeEl.textContent    = formatSinceDeploy(deployedAt);
 
-      // tick uptime every minute
+      // tick every minute
       setInterval(() => {
         if (deployAgoEl) deployAgoEl.textContent = timeAgo(deployedAt);
-        if (uptimeEl)    uptimeEl.textContent    = formatUptime(deployedAt);
+        if (uptimeEl)    uptimeEl.textContent    = formatSinceDeploy(deployedAt);
       }, 60000);
     })
     .catch(() => {
