@@ -622,6 +622,164 @@
 
     .tech-block .pills { gap: 5px; }
 
+    /* ── LIVE STATUS PANEL ── */
+    .live-panel {
+      border: 1px solid var(--border);
+      background: var(--bg2);
+      margin-top: 2px;
+      overflow: hidden;
+    }
+
+    .live-panel-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg3);
+    }
+
+    .live-dot-wrap {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 0 rgba(34,197,94,0.5);
+      animation: livePulse 2s cubic-bezier(0.4,0,0.6,1) infinite;
+    }
+
+    @keyframes livePulse {
+      0%   { box-shadow: 0 0 0 0   rgba(34,197,94,0.5); }
+      50%  { box-shadow: 0 0 0 5px rgba(34,197,94,0); }
+      100% { box-shadow: 0 0 0 0   rgba(34,197,94,0); }
+    }
+
+    .live-dot-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: #22c55e;
+      font-weight: 500;
+    }
+
+    .live-panel-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text2);
+      letter-spacing: 0.08em;
+      flex: 1;
+    }
+
+    .live-panel-link {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text3);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color var(--transition);
+    }
+
+    .live-panel-link:hover { color: var(--red); }
+
+    .live-panel-body {
+      display: grid;
+      grid-template-columns: 1fr 1px 1fr 1px 1fr;
+      align-items: center;
+    }
+
+    .live-metric {
+      padding: 22px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .live-metric-divider {
+      width: 1px;
+      height: 100%;
+      background: var(--border);
+      align-self: stretch;
+    }
+
+    .live-metric-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text3);
+    }
+
+    .live-metric-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .live-metric-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--text3);
+      letter-spacing: 0.06em;
+    }
+
+    /* Loading dots */
+    .live-loading {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .live-loading span {
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--text3);
+      animation: loadBounce 1.2s ease-in-out infinite;
+    }
+
+    .live-loading span:nth-child(2) { animation-delay: 0.2s; }
+    .live-loading span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes loadBounce {
+      0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+      40%            { opacity: 1;   transform: scale(1.2); }
+    }
+
+    /* Pipeline status */
+    .live-status-ok  { color: #22c55e; }
+    .live-status-err { color: var(--red); }
+
+    .live-status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .live-status-dot-ok  { background: #22c55e; }
+    .live-status-dot-err { background: var(--red); }
+
+    @media (max-width: 640px) {
+      .live-panel-body {
+        grid-template-columns: 1fr;
+      }
+      .live-metric-divider {
+        width: 100%; height: 1px;
+        align-self: auto;
+      }
+      .live-metric { padding: 16px 20px; }
+    }
+
     /* ── IMPRESSUM ── */
     .imp-grid {
       display: grid;
@@ -1015,6 +1173,43 @@
         </div>
       </div>
     </div>
+
+    <!-- LIVE STATUS PANEL -->
+    <div class="live-panel">
+      <div class="live-panel-header">
+        <div class="live-dot-wrap">
+          <span class="live-dot"></span>
+          <span class="live-dot-label">LIVE</span>
+        </div>
+        <span class="live-panel-title">System Status</span>
+        <a href="https://github.com/Timon-Weides/IT-CV/actions" target="_blank" rel="noopener" class="live-panel-link">GitHub Actions ↗</a>
+      </div>
+      <div class="live-panel-body">
+        <div class="live-metric">
+          <span class="live-metric-label">Last Deployment</span>
+          <span class="live-metric-value" id="deploy-date">
+            <span class="live-loading">
+              <span></span><span></span><span></span>
+            </span>
+          </span>
+          <span class="live-metric-sub" id="deploy-ago"></span>
+        </div>
+        <div class="live-metric-divider"></div>
+        <div class="live-metric">
+          <span class="live-metric-label">Uptime</span>
+          <span class="live-metric-value" id="uptime-counter">—</span>
+          <span class="live-metric-sub">seit erstem Deploy</span>
+        </div>
+        <div class="live-metric-divider"></div>
+        <div class="live-metric">
+          <span class="live-metric-label">Pipeline</span>
+          <span class="live-metric-value live-status-ok" id="pipeline-status">
+            <span class="live-status-dot live-status-dot-ok"></span>passing
+          </span>
+          <span class="live-metric-sub">Terraform · Trivy · S3</span>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- BERUFSERFAHRUNG -->
@@ -1180,18 +1375,6 @@
         </div>
       </div>
     </div>
-    <p>Last Deployment: <span id="deploy-date">loading...</span></p>
-
-<script>
-fetch("deploy-info.json")
-  .then(response => response.json())
-  .then(data => {
-    document.getElementById("deploy-date").textContent = data.deployed_at;
-  })
-  .catch(() => {
-    document.getElementById("deploy-date").textContent = "unbekannt";
-  });
-</script>
     <p class="imp-note">Diese Website dient ausschließlich der persönlichen Vorstellung. Es werden keine Waren oder Dienstleistungen angeboten.</p>
   </section>
 
@@ -1203,6 +1386,60 @@ fetch("deploy-info.json")
 </div>
 
 <script>
+  /* ── LIVE DEPLOY PANEL ── */
+  function timeAgo(dateStr) {
+    const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+    if (diff < 60)    return 'gerade eben';
+    if (diff < 3600)  return `vor ${Math.floor(diff / 60)} Min.`;
+    if (diff < 86400) return `vor ${Math.floor(diff / 3600)} Std.`;
+    const days = Math.floor(diff / 86400);
+    return `vor ${days} Tag${days > 1 ? 'en' : ''}`;
+  }
+
+  function formatUptime(deployedAt) {
+    const diff = Math.floor((Date.now() - new Date(deployedAt)) / 1000);
+    const d = Math.floor(diff / 86400);
+    const h = Math.floor((diff % 86400) / 3600);
+    const m = Math.floor((diff % 3600) / 60);
+    if (d > 0) return `${d}d ${h}h ${m}m`;
+    if (h > 0) return `${h}h ${m}m`;
+    return `${m}m`;
+  }
+
+  function formatDeployDate(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('de-DE', {
+      day: '2-digit', month: '2-digit', year: 'numeric'
+    }) + ' ' + d.toLocaleTimeString('de-DE', {
+      hour: '2-digit', minute: '2-digit'
+    });
+  }
+
+  const deployDateEl  = document.getElementById('deploy-date');
+  const deployAgoEl   = document.getElementById('deploy-ago');
+  const uptimeEl      = document.getElementById('uptime-counter');
+  let deployedAt      = null;
+
+  fetch('deploy-info.json')
+    .then(r => r.json())
+    .then(data => {
+      deployedAt = data.deployed_at;
+      if (deployDateEl) deployDateEl.innerHTML = formatDeployDate(deployedAt);
+      if (deployAgoEl)  deployAgoEl.textContent = timeAgo(deployedAt);
+      if (uptimeEl)     uptimeEl.textContent    = formatUptime(deployedAt);
+
+      // tick uptime every minute
+      setInterval(() => {
+        if (deployAgoEl) deployAgoEl.textContent = timeAgo(deployedAt);
+        if (uptimeEl)    uptimeEl.textContent    = formatUptime(deployedAt);
+      }, 60000);
+    })
+    .catch(() => {
+      if (deployDateEl) deployDateEl.textContent = 'N/A';
+      if (deployAgoEl)  deployAgoEl.textContent  = '';
+      if (uptimeEl)     uptimeEl.textContent     = '—';
+    });
+
   /* ── THEME ── */
   const html = document.documentElement;
   const btn  = document.getElementById('themeBtn');
