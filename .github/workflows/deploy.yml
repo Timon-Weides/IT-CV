@@ -40,6 +40,10 @@ jobs:
           severity: 'HIGH,CRITICAL'
           exit-code: '1'
 
+      - name: Generate deployment info
+        run: |
+          echo "{\"deployed_at\":\"$(date -u '+%d.%m.%Y %H:%M UTC')\",\"commit\":\"${GITHUB_SHA::7}\"}" > website/deploy-info.json
+
       - name: Upload Website to S3
         run: |
           aws s3 sync ./website s3://${{ vars.S3_BUCKET }} --delete

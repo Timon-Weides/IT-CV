@@ -1180,14 +1180,21 @@
         </div>
       </div>
     </div>
-    <p class="imp-note">Diese Website dient ausschließlich der persönlichen Vorstellung. Es werden keine Waren oder Dienstleistungen angeboten.</p>
-  </section>
-<p id="test"></p>
+    <p>Last Deployment: <span id="deploy-date">loading...</span></p>
 
 <script>
-document.getElementById("test").textContent =
-  "JavaScript funktioniert";
+fetch("deploy-info.json")
+  .then(response => response.json())
+  .then(data => {
+    document.getElementById("deploy-date").textContent = data.deployed_at;
+  })
+  .catch(() => {
+    document.getElementById("deploy-date").textContent = "unbekannt";
+  });
 </script>
+    <p class="imp-note">Diese Website dient ausschließlich der persönlichen Vorstellung. Es werden keine Waren oder Dienstleistungen angeboten.</p>
+  </section>
+
   <footer>
     <span class="ft-l">Timon <span>Weides</span></span>
     <span class="ft-r">Stand 2026</span>
