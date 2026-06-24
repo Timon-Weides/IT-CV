@@ -1,85 +1,112 @@
-Timon Weides – Cloud CV Portfolio
-
-Persönliche CV-Website mit automatisiertem Deployment auf AWS, Infrastructure as Code und Security-Scanning.
+Timon Weides — Cloud CV Portfolio
 
 Projektübersicht
 
-Dieses Projekt dient als praktische Demonstration moderner Cloud- und DevOps-Technologien. Die Website wird nach jeder Änderung automatisch über eine CI/CD-Pipeline veröffentlicht.
+Dieses Projekt ist kein einfacher Lebenslauf — die Website selbst ist das Projekt. Jede Änderung am Code wird automatisch über eine CI/CD-Pipeline validiert, geprüft und auf AWS deployed. Ziel ist die praktische Demonstration moderner Cloud- und DevOps-Konzepte in einer produktiven Umgebung.
 
-Architektur:
 
-GitHub Repo
+Architektur
 
-↓
+GitHub Repository
+       │
+       ▼
+GitHub Actions (CI/CD)
+       │
+       ├── Trivy Security Scan
+       ├── Terraform Init → Validate → Plan → Apply
+       └── AWS S3 Sync + CloudFront Invalidierung
+                          │
+                          ▼
+                    AWS S3 (Static Hosting)
+                          │
+                          ▼
+                  Amazon CloudFront (CDN)
+                          │
+                          ▼
+              AWS Certificate Manager (HTTPS)
+                          │
+                          ▼
+                 Amazon Route 53 (DNS)
+                          │
+                          ▼
+                  https://timonweides.de
 
-GitHub Actions
 
-↓
+Stack
 
-Terraform Validate & Plan
+KategorieTechnologieCloudAWS S3, CloudFront, Route 53, ACMIaCTerraformCI/CDGitHub ActionsSecurityTrivy Security ScannerStateTerraform Remote State (S3 + Lock)
 
-↓
 
-Trivy Security Scan
+Pipeline
 
-↓
+Bei jedem Push auf main wird automatisch folgende Pipeline ausgeführt:
 
-AWS S3 Static Website Hosting
+1. Checkout Repository
+2. Trivy Security Scan         → scannt auf HIGH/CRITICAL Vulnerabilities
+3. Terraform Init              → lädt Remote State aus S3
+4. Terraform Validate          → prüft Syntax der .tf Dateien
+5. Terraform Plan              → zeigt geplante Infrastrukturänderungen
+6. Terraform Apply             → führt Änderungen durch (nur auf main)
+7. Generate deploy-info.json   → Timestamp + Commit Hash
+8. Upload nach S3              → synct Website-Dateien
+9. CloudFront Invalidierung    → leert CDN Cache
 
-↓
 
-Amazon CloudFront
-
-↓
-
-Route 53 DNS
-
-↓
-
-https://timonweides.de
-
-Verwendete Technologien:
-Cloud
-AWS S3
-Amazon CloudFront
-Amazon Route 53
-AWS Certificate Manager (ACM)
-Infrastructure as Code
-Terraform
-CI/CD
-GitHub Actions
-
-Sicherheit:
-Trivy Security Scanner
-
-Funktionen:
-Automatisches Deployment bei jedem Push auf den Main-Branch
-Terraform-Validierung innerhalb der CI/CD-Pipeline
-Automatisierte Sicherheitsprüfung mittels Trivy
-Auslieferung der Website über CloudFront CDN
-HTTPS-Verschlüsselung über AWS Certificate Manager
-Eigene Domain über Route 53
-
-Bei jedem Push auf den Main-Branch wird automatisch folgende Pipeline ausgeführt:
-Repo auschecken
-Terraform Initialisierung
-Terraform Validierung
-Terraform Plan
-Trivy Security Scan
-AWS Authentifizierung
-Deployment der Website nach Amazon S3
-CloudFront Cache Invalidierung
 Terraform
 
-Terraform wird verwendet, um Infrastruktur als Code abzubilden und Infrastrukturänderungen automatisiert zu prüfen.
+Terraform verwaltet die AWS-Infrastruktur als Code und wird vollständig in der CI/CD-Pipeline ausgeführt.
 
-Aktuell verwaltete Ressourcen:
-AWS S3 Website Bucket
-Geplante Erweiterungen
-Terraform Remote State Backend in AWS S3
-Verwaltung von CloudFront über Terraform
-Verwaltung von Route 53 und ACM über Terraform
-Automatische Pull-Request-Validierungen
+Verwaltete Ressourcen:
 
-Ziel des Projekts:
-Ziel dieses Projekts ist es, praktische Erfahrungen mit Cloud- und DevOps-Technologien zu sammeln und typische Enterprise-Konzepte in einer produktiven Umgebung umzusetzen.
+
+AWS S3 Bucket (Static Website Hosting)
+Amazon CloudFront Distribution
+
+
+Remote State:
+
+Der Terraform State wird nicht lokal gespeichert, sondern in einem dedizierten S3 Bucket mit aktiviertem Versioning und State Locking:
+
+hclbackend "s3" {
+  bucket       = "timon-weides-tfstate"
+  key          = "cv-website/terraform.tfstate"
+  region       = "eu-central-1"
+  encrypt      = true
+  use_lockfile = true
+}
+
+
+Live Status
+
+Die Website zeigt einen Live-Status-Block mit:
+
+
+Zeitpunkt des letzten Deployments
+Zeit seit letztem Deploy
+Pipeline-Status
+
+
+Diese Daten werden von GitHub Actions bei jedem Deploy in eine deploy-info.json geschrieben und von der Website geladen.
+
+
+Lokale Entwicklung
+
+bash# Repository klonen
+git clone https://github.com/Timon-Weides/IT-CV.git
+cd IT-CV
+
+# Website lokal öffnen
+open website/index.html
+
+# Terraform lokal ausführen
+cd terraform
+terraform init
+terraform plan
+
+Voraussetzungen: AWS CLI konfiguriert, Terraform installiert
+
+
+
+Ziel
+
+Praktische Erfahrungen mit Cloud- und DevOps-Technologien sammeln und Enterprise-Konzepte in einer produktiven Umgebung umsetzen — nicht nur theoretisch kennen, sondern aktiv betreiben.
