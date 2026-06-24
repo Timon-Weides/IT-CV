@@ -1233,12 +1233,11 @@
 
     <p class="project-intro">
       Diese Website ist kein einfacher Lebenslauf — sie ist selbst ein DevOps-Projekt.
-      Der gesamte Code liegt auf <a href="https://github.com/Timon-Weides/IT-CV/tree/main" target="_blank" rel="noopener">GitHub</a> und wird bei jedem Push auf den Main-Branch vollautomatisch über eine CI/CD-Pipeline auf AWS deployed. <br>
-      Ziel ist die praktische Demonstration moderner Cloud- und DevOps-Konzepte in einer produktiven Umgebung. <br>
-      Weitere Informationen zum Projekt, zur Architektur und zu den verwendeten Technologien finden Sie in der README-Datei im GitHub-Repository.
+      Der gesamte Code liegt auf <a href="https://github.com/Timon-Weides/IT-CV/tree/main" target="_blank" rel="noopener">GitHub</a> und wird bei jedem Push auf den Main-Branch vollautomatisch über eine CI/CD-Pipeline auf AWS deployed.
+      Die Infrastruktur wird vollständig über Terraform als Code verwaltet — inklusive Remote State in S3 und automatischem Apply in der Pipeline.
     </p>
 
-<svg width="100%" viewBox="0 0 680 410" style="margin-bottom: 36px; display: block;">
+<svg width="100%" viewBox="0 0 680 530" style="margin-bottom: 36px; display: block;">
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
       <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1247,8 +1246,8 @@
 
   <!-- NODE 1: GitHub Repo -->
   <rect x="240" y="20" width="200" height="44" rx="3" fill="var(--red-glow)" stroke="var(--red)" stroke-width="1"/>
-  <text x="340" y="39" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="13" fill="var(--red-text)" font-weight="600">GitHub Repo</text>
-  <text x="340" y="55" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="var(--red-text)" letter-spacing="1" opacity="0.7">TRIGGER: push to main</text>
+  <text x="340" y="39" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="13" fill="var(--red)" font-weight="600">GitHub Repo</text>
+  <text x="340" y="55" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="var(--red)" letter-spacing="1" opacity="0.7">TRIGGER: push to main</text>
 
   <line x1="340" y1="64" x2="340" y2="84" stroke="var(--text3)" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow)"/>
 
@@ -1256,55 +1255,67 @@
   <rect x="256" y="84" width="168" height="36" rx="3" fill="none" stroke="var(--border2)" stroke-width="0.5"/>
   <text x="340" y="106" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--text2)">GitHub Actions</text>
 
-  <!-- Fork -->
-  <path d="M340 120 L340 140 L240 140 M340 140 L440 140" fill="none" stroke="var(--text3)" stroke-width="0.5" stroke-dasharray="3 3"/>
-  <line x1="240" y1="140" x2="240" y2="156" stroke="var(--text3)" stroke-width="0.5" marker-end="url(#arrow)"/>
-  <line x1="440" y1="140" x2="440" y2="156" stroke="var(--text3)" stroke-width="0.5" marker-end="url(#arrow)"/>
+  <line x1="340" y1="120" x2="340" y2="140" stroke="var(--text3)" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow)"/>
 
-  <!-- NODE 3a: Terraform -->
-  <rect x="164" y="156" width="152" height="48" rx="3" fill="none" stroke="var(--border2)" stroke-width="0.5"/>
-  <text x="240" y="174" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--text)">Terraform</text>
-  <text x="240" y="192" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="9" fill="var(--text3)" letter-spacing="1">VALIDATE &amp; PLAN</text>
+  <!-- NODE 3: Trivy (first — security before deploy) -->
+  <rect x="256" y="140" width="168" height="48" rx="3" fill="none" stroke="var(--border2)" stroke-width="0.5"/>
+  <text x="340" y="158" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--text)">Trivy</text>
+  <text x="340" y="176" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="9" fill="var(--text3)" letter-spacing="1">SECURITY SCAN</text>
 
-  <!-- NODE 3b: Trivy -->
-  <rect x="364" y="156" width="152" height="48" rx="3" fill="none" stroke="var(--border2)" stroke-width="0.5"/>
-  <text x="440" y="174" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--text)">Trivy</text>
-  <text x="440" y="192" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="9" fill="var(--text3)" letter-spacing="1">SECURITY SCAN</text>
+  <line x1="340" y1="188" x2="340" y2="208" stroke="var(--text3)" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow)"/>
 
-  <!-- Merge -->
-  <line x1="240" y1="204" x2="240" y2="224" stroke="var(--text3)" stroke-width="0.5" stroke-dasharray="3 3"/>
-  <line x1="440" y1="204" x2="440" y2="224" stroke="var(--text3)" stroke-width="0.5" stroke-dasharray="3 3"/>
-  <path d="M240 224 L340 224 L440 224" fill="none" stroke="var(--text3)" stroke-width="0.5" stroke-dasharray="3 3"/>
-  <line x1="340" y1="224" x2="340" y2="244" stroke="var(--text3)" stroke-width="1" marker-end="url(#arrow)"/>
-  <text x="356" y="236" font-family="'JetBrains Mono', monospace" font-size="9" fill="var(--text3)" letter-spacing="1">DEPLOY</text>
+  <!-- NODE 4: Terraform block -->
+  <rect x="164" y="208" width="352" height="80" rx="3" fill="none" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="4 3"/>
+  <text x="340" y="224" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" fill="var(--text3)" letter-spacing="1.5">TERRAFORM</text>
 
-  <!-- NODE 4: AWS S3 -->
-  <rect x="276" y="244" width="128" height="36" rx="3" fill="none" stroke="var(--border2)" stroke-width="0.5"/>
-  <text x="340" y="262" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--text2)">AWS S3</text>
+  <!-- Terraform steps inline — centered: total width 3*80+2*16=272, start at 340-136=204 -->
+  <rect x="204" y="230" width="80" height="32" rx="3" fill="none" stroke="var(--border2)" stroke-width="0.5"/>
+  <text x="244" y="250" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="10" fill="var(--text2)">Init</text>
 
-  <!-- S3 fork -->
-  <path d="M340 280 L340 290 L260 290 M340 290 L420 290" fill="none" stroke="var(--text3)" stroke-width="0.5"/>
-  <line x1="260" y1="290" x2="260" y2="296" stroke="var(--text3)" stroke-width="0.5" marker-end="url(#arrow)"/>
-  <line x1="420" y1="290" x2="420" y2="296" stroke="var(--text3)" stroke-width="0.5" marker-end="url(#arrow)"/>
+  <line x1="284" y1="246" x2="300" y2="246" stroke="var(--text3)" stroke-width="0.5" marker-end="url(#arrow)"/>
 
-  <!-- NODE 5a: CloudFront -->
-  <rect x="196" y="296" width="128" height="36" rx="3" fill="none" stroke="var(--border2)" stroke-width="0.5"/>
-  <text x="260" y="314" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--text2)">CloudFront</text>
+  <rect x="300" y="230" width="80" height="32" rx="3" fill="none" stroke="var(--border2)" stroke-width="0.5"/>
+  <text x="340" y="250" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="10" fill="var(--text2)">Plan</text>
 
-  <!-- NODE 5b: Route 53 -->
-  <rect x="356" y="296" width="128" height="36" rx="3" fill="none" stroke="var(--border2)" stroke-width="0.5"/>
-  <text x="420" y="314" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--text2)">Route 53</text>
+  <line x1="380" y1="246" x2="396" y2="246" stroke="var(--text3)" stroke-width="0.5" marker-end="url(#arrow)"/>
+
+  <rect x="396" y="230" width="80" height="32" rx="3" fill="none" stroke="var(--border2)" stroke-width="0.5"/>
+  <text x="436" y="250" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="10" fill="var(--text2)">Apply</text>
+
+  <!-- Remote State indicator -->
+  <text x="340" y="302" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" fill="var(--text3)" letter-spacing="1">STATE: s3://timon-weides-tfstate</text>
+
+  <line x1="340" y1="290" x2="340" y2="318" stroke="var(--text3)" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow)"/>
+
+  <!-- NODE 5: S3 Sync -->
+  <rect x="256" y="318" width="168" height="36" rx="3" fill="none" stroke="var(--border2)" stroke-width="0.5"/>
+  <text x="340" y="336" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="12" fill="var(--text2)">AWS S3 Sync</text>
+
+  <!-- S3 fork to CloudFront + Route53 -->
+  <path d="M340 354 L340 374 L240 374 M340 374 L440 374" fill="none" stroke="var(--text3)" stroke-width="0.5" stroke-dasharray="3 3"/>
+  <line x1="240" y1="374" x2="240" y2="386" stroke="var(--text3)" stroke-width="0.5" marker-end="url(#arrow)"/>
+  <line x1="440" y1="374" x2="440" y2="386" stroke="var(--text3)" stroke-width="0.5" marker-end="url(#arrow)"/>
+
+  <!-- NODE 6a: CloudFront -->
+  <rect x="164" y="386" width="152" height="36" rx="3" fill="none" stroke="var(--border2)" stroke-width="0.5"/>
+  <text x="240" y="400" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="11" fill="var(--text2)">CloudFront</text>
+  <text x="240" y="414" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="8" fill="var(--text3)" letter-spacing="1">CACHE INVALIDATION</text>
+
+  <!-- NODE 6b: Route53 + ACM -->
+  <rect x="364" y="386" width="152" height="36" rx="3" fill="none" stroke="var(--border2)" stroke-width="0.5"/>
+  <text x="440" y="400" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="11" fill="var(--text2)">Route 53 + ACM</text>
+  <text x="440" y="414" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="8" fill="var(--text3)" letter-spacing="1">DNS · HTTPS</text>
 
   <!-- Merge to final -->
-  <line x1="260" y1="332" x2="260" y2="352" stroke="var(--text3)" stroke-width="0.5" stroke-dasharray="3 3"/>
-  <line x1="420" y1="332" x2="420" y2="352" stroke="var(--text3)" stroke-width="0.5" stroke-dasharray="3 3"/>
-  <path d="M260 352 L340 352 L420 352" fill="none" stroke="var(--text3)" stroke-width="0.5" stroke-dasharray="3 3"/>
-  <line x1="340" y1="352" x2="340" y2="362" stroke="var(--red)" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="240" y1="422" x2="240" y2="446" stroke="var(--text3)" stroke-width="0.5" stroke-dasharray="3 3"/>
+  <line x1="440" y1="422" x2="440" y2="446" stroke="var(--text3)" stroke-width="0.5" stroke-dasharray="3 3"/>
+  <path d="M240 446 L340 446 L440 446" fill="none" stroke="var(--text3)" stroke-width="0.5" stroke-dasharray="3 3"/>
+  <line x1="340" y1="446" x2="340" y2="460" stroke="var(--red)" stroke-width="1" marker-end="url(#arrow)"/>
 
-  <!-- NODE 6: timonweides.de -->
-  <rect x="220" y="362" width="240" height="44" rx="3" fill="var(--red-glow)" stroke="var(--red)" stroke-width="1"/>
-  <text x="340" y="381" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="14" fill="var(--red-text)" font-weight="600">timonweides.de</text>
-  <text x="340" y="397" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="9" fill="var(--red-text)" opacity="0.7" letter-spacing="1">HTTPS · CDN · DNS</text>
+  <!-- NODE 7: timonweides.de -->
+  <rect x="220" y="460" width="240" height="44" rx="3" fill="var(--red-glow)" stroke="var(--red)" stroke-width="1"/>
+  <text x="340" y="479" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="14" fill="var(--red)" font-weight="600">timonweides.de</text>
+  <text x="340" y="496" text-anchor="middle" dominant-baseline="central" font-family="'JetBrains Mono', monospace" font-size="9" fill="var(--red)" opacity="0.7" letter-spacing="1">HTTPS · CDN · DNS</text>
 </svg>
 
     <div class="project-tech-grid">
@@ -1321,6 +1332,8 @@
         <div class="tech-block-label">IaC</div>
         <div class="pills">
           <span class="pill">Terraform</span>
+          <span class="pill">Remote State</span>
+          <span class="pill">State Lock</span>
         </div>
       </div>
       <div class="tech-block">
