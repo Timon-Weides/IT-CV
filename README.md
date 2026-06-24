@@ -1,12 +1,20 @@
-Timon Weides — Cloud CV Portfolio
+# Timon Weides — Cloud CV Portfolio
 
-Projektübersicht
+> Persönliche CV-Website als produktives DevOps-Projekt — vollständig automatisiert deployed auf AWS mit Infrastructure as Code, CI/CD Pipeline und Security-Scanning.
+
+🌐 **[timonweides.de](https://timonweides.de)**
+
+---
+
+## Projektübersicht
 
 Dieses Projekt ist kein einfacher Lebenslauf — die Website selbst ist das Projekt. Jede Änderung am Code wird automatisch über eine CI/CD-Pipeline validiert, geprüft und auf AWS deployed. Ziel ist die praktische Demonstration moderner Cloud- und DevOps-Konzepte in einer produktiven Umgebung.
 
+---
 
-Architektur
+## Architektur
 
+```
 GitHub Repository
        │
        ▼
@@ -30,17 +38,27 @@ GitHub Actions (CI/CD)
                           │
                           ▼
                   https://timonweides.de
+```
 
+---
 
-Stack
+## Stack
 
-KategorieTechnologieCloudAWS S3, CloudFront, Route 53, ACMIaCTerraformCI/CDGitHub ActionsSecurityTrivy Security ScannerStateTerraform Remote State (S3 + Lock)
+| Kategorie | Technologie |
+|---|---|
+| **Cloud** | AWS S3, CloudFront, Route 53, ACM |
+| **IaC** | Terraform |
+| **CI/CD** | GitHub Actions |
+| **Security** | Trivy Security Scanner |
+| **State** | Terraform Remote State (S3 + Lock) |
 
+---
 
-Pipeline
+## Pipeline
 
-Bei jedem Push auf main wird automatisch folgende Pipeline ausgeführt:
+Bei jedem Push auf `main` wird automatisch folgende Pipeline ausgeführt:
 
+```
 1. Checkout Repository
 2. Trivy Security Scan         → scannt auf HIGH/CRITICAL Vulnerabilities
 3. Terraform Init              → lädt Remote State aus S3
@@ -50,48 +68,49 @@ Bei jedem Push auf main wird automatisch folgende Pipeline ausgeführt:
 7. Generate deploy-info.json   → Timestamp + Commit Hash
 8. Upload nach S3              → synct Website-Dateien
 9. CloudFront Invalidierung    → leert CDN Cache
+```
 
+---
 
-Terraform
+## Terraform
 
 Terraform verwaltet die AWS-Infrastruktur als Code und wird vollständig in der CI/CD-Pipeline ausgeführt.
 
-Verwaltete Ressourcen:
+**Verwaltete Ressourcen:**
+- AWS S3 Bucket (Static Website Hosting)
+- Amazon CloudFront Distribution
 
-
-AWS S3 Bucket (Static Website Hosting)
-Amazon CloudFront Distribution
-
-
-Remote State:
+**Remote State:**
 
 Der Terraform State wird nicht lokal gespeichert, sondern in einem dedizierten S3 Bucket mit aktiviertem Versioning und State Locking:
 
-hclbackend "s3" {
+```hcl
+backend "s3" {
   bucket       = "timon-weides-tfstate"
   key          = "cv-website/terraform.tfstate"
   region       = "eu-central-1"
   encrypt      = true
   use_lockfile = true
 }
+```
 
+---
 
-Live Status
+## Live Status
 
 Die Website zeigt einen Live-Status-Block mit:
+- Zeitpunkt des letzten Deployments
+- Zeit seit letztem Deploy
+- Pipeline-Status
 
+Diese Daten werden von GitHub Actions bei jedem Deploy in eine `deploy-info.json` geschrieben und von der Website geladen.
 
-Zeitpunkt des letzten Deployments
-Zeit seit letztem Deploy
-Pipeline-Status
+---
 
+## Lokale Entwicklung
 
-Diese Daten werden von GitHub Actions bei jedem Deploy in eine deploy-info.json geschrieben und von der Website geladen.
-
-
-Lokale Entwicklung
-
-bash# Repository klonen
+```bash
+# Repository klonen
 git clone https://github.com/Timon-Weides/IT-CV.git
 cd IT-CV
 
@@ -102,11 +121,20 @@ open website/index.html
 cd terraform
 terraform init
 terraform plan
+```
 
-Voraussetzungen: AWS CLI konfiguriert, Terraform installiert
+**Voraussetzungen:** AWS CLI konfiguriert, Terraform installiert
 
+---
 
+## Geplante Erweiterungen
 
-Ziel
+- [ ] Pull Request Workflow (plan auf PR, apply auf merge)
+- [ ] Route 53 und ACM in Terraform verwalten
+- [ ] Serverless Backend (AWS Lambda + API Gateway)
+
+---
+
+## Ziel
 
 Praktische Erfahrungen mit Cloud- und DevOps-Technologien sammeln und Enterprise-Konzepte in einer produktiven Umgebung umsetzen — nicht nur theoretisch kennen, sondern aktiv betreiben.
