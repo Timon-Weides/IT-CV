@@ -11,13 +11,21 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
+
+      - name: Run Trivy Security Scan
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '1'
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -31,18 +39,16 @@ jobs:
 
       - name: Terraform Plan
         run: terraform -chdir=terraform plan -no-color
-      
+
       - name: Terraform Apply
-        run: terraform -chdir=terraform apply -auto-approve
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        
-      - name: Run Trivy Security Scan
-        uses: aquasecurity/trivy-action@v0.36.0
-        with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          severity: 'HIGH,CRITICAL'
-          exit-code: '1'
+        run: terraform -chdir=terraform apply -auto-approve
+
+      - name: Terraform Output
+        id: tf_output
+        run: |
+          CF_ID=$(terraform -chdir=terraform output -raw cloudfront_id)
+          echo "cloudfront_id=$CF_ID" >> $GITHUB_OUTPUT
 
       - name: Generate deployment info
         run: |
@@ -54,10 +60,6 @@ jobs:
 
       - name: Clear CloudFront Cache
         run: |
-          DISTRIBUTION_ID=$(aws cloudfront list-distributions \
-            --query "DistributionList.Items[?Aliases.Items[?contains(@, 'timonweides.de')]].Id" \
-            --output text)
-
           aws cloudfront create-invalidation \
-            --distribution-id $DISTRIBUTION_ID \
+            --distribution-id ${{ steps.tf_output.outputs.cloudfront_id }} \
             --paths "/*"
