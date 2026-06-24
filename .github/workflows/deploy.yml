@@ -31,6 +31,10 @@ jobs:
 
       - name: Terraform Plan
         run: terraform -chdir=terraform plan -no-color
+      
+      - name: Terraform Apply
+        run: terraform -chdir=terraform apply -auto-approve
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         
       - name: Run Trivy Security Scan
         uses: aquasecurity/trivy-action@v0.36.0
