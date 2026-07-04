@@ -3,7 +3,7 @@ name: Deploy Website
 on:
   push:
     branches:
-      - main
+      - *
 
 jobs:
   deploy:
@@ -41,7 +41,7 @@ jobs:
         run: terraform -chdir=terraform plan -no-color
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.event_name == 'push'
         run: terraform -chdir=terraform apply -auto-approve
 
       - name: Terraform Output
