@@ -1203,8 +1203,8 @@
       <h1>Timon<br><em>Weides</em></h1>
       <p class="hero-role">IT-Administrator</p>
       <div class="hero-contacts">
-        <a href="#" class="js-email" rel="nofollow">Kontakt per E-Mail</a>
-        <a href="#" class="js-phone" rel="nofollow">Kontakt per Telefon</a>
+        <a href="#" class="js-email" rel="nofollow">E-Mail anzeigen</a>
+        <a href="#" class="js-phone" rel="nofollow">Telefonnummer anzeigen</a>
         <a href="#">Langenfeld (Rheinland), DE</a>
       </div>
     </div>
@@ -1547,8 +1547,8 @@
       <div>
         <div class="imp-label">Kontakt</div>
         <div class="imp-body">
-          <a href="#" class="js-phone" rel="nofollow">Kontakt per Telefon</a><br>
-          <a href="#" class="js-email" rel="nofollow">Kontakt per E-Mail</a>
+          <a href="#" class="js-phone" rel="nofollow">Telefonnummer anzeigen</a><br>
+          <a href="#" class="js-email" rel="nofollow">E-Mail anzeigen</a>
         </div>
       </div>
     </div>
@@ -1563,23 +1563,51 @@
 </div>
 
 <script>
-  /* ── KONTAKT (gegen simples Scraping — Strings liegen rückwärts im Quelltext) ── */
+  /* ── KONTAKT (Click-to-Reveal — Daten landen erst nach Klick im DOM, ── */
+  /* ── Crawler, die nicht aktiv klicken, bekommen sie nie zu sehen)    ── */
   (function () {
     var emailRev        = 'ed.evil@sediewnomit';
     var phoneRevDigits   = '469407437194+';
     var phoneRevDisplay = '4694074 371 94+';
+    var revealed = { email: false, phone: false };
 
-    var email        = emailRev.split('').reverse().join('');
-    var phoneDigits  = phoneRevDigits.split('').reverse().join('');
-    var phoneDisplay = phoneRevDisplay.split('').reverse().join('');
+    function revealEmail() {
+      revealed.email = true;
+      var email = emailRev.split('').reverse().join('');
+      document.querySelectorAll('.js-email').forEach(function (el) {
+        el.href = 'mailto:' + email;
+        el.textContent = email;
+        el.removeAttribute('rel');
+      });
+    }
+
+    function revealPhone() {
+      revealed.phone = true;
+      var phoneDigits  = phoneRevDigits.split('').reverse().join('');
+      var phoneDisplay = phoneRevDisplay.split('').reverse().join('');
+      document.querySelectorAll('.js-phone').forEach(function (el) {
+        el.href = 'tel:' + phoneDigits;
+        el.textContent = phoneDisplay;
+        el.removeAttribute('rel');
+      });
+    }
 
     document.querySelectorAll('.js-email').forEach(function (el) {
-      el.href = 'mailto:' + email;
-      el.textContent = email;
+      el.addEventListener('click', function (e) {
+        if (revealed.email) return;
+        e.preventDefault();
+        revealEmail();
+        window.location.href = el.href;
+      });
     });
+
     document.querySelectorAll('.js-phone').forEach(function (el) {
-      el.href = 'tel:' + phoneDigits;
-      el.textContent = phoneDisplay;
+      el.addEventListener('click', function (e) {
+        if (revealed.phone) return;
+        e.preventDefault();
+        revealPhone();
+        window.location.href = el.href;
+      });
     });
   })();
 
